@@ -32,64 +32,60 @@ extern_methods!(
             unsafe { app.unwrap_unchecked() }
         }
 
-        pub fn currentEvent(&self) -> Option<Id<NSEvent, Shared>> {
-            unsafe { msg_send_id![self, currentEvent] }
-        }
+        #[method_id(currentEvent)]
+        pub fn currentEvent(&self) -> Option<Id<NSEvent, Shared>>;
 
-        #[sel(postEvent:atStart:)]
+        #[method(postEvent:atStart:)]
         pub fn postEvent_atStart(&self, event: &NSEvent, front_of_queue: bool);
 
-        #[sel(presentationOptions)]
+        #[method(presentationOptions)]
         pub fn presentationOptions(&self) -> NSApplicationPresentationOptions;
 
-        pub fn windows(&self) -> Id<NSArray<NSWindow, Shared>, Shared> {
-            unsafe { msg_send_id![self, windows] }
-        }
+        #[method_id(windows)]
+        pub fn windows(&self) -> Id<NSArray<NSWindow, Shared>, Shared>;
 
-        pub fn keyWindow(&self) -> Option<Id<NSWindow, Shared>> {
-            unsafe { msg_send_id![self, keyWindow] }
-        }
+        #[method_id(keyWindow)]
+        pub fn keyWindow(&self) -> Option<Id<NSWindow, Shared>>;
 
         // TODO: NSApplicationDelegate
-        #[sel(setDelegate:)]
+        #[method(setDelegate:)]
         pub fn setDelegate(&self, delegate: &Object);
 
-        #[sel(setPresentationOptions:)]
+        #[method(setPresentationOptions:)]
         pub fn setPresentationOptions(&self, options: NSApplicationPresentationOptions);
 
-        #[sel(hide:)]
+        #[method(hide:)]
         pub fn hide(&self, sender: Option<&Object>);
 
-        #[sel(orderFrontCharacterPalette:)]
+        #[method(orderFrontCharacterPalette:)]
         #[allow(dead_code)]
         pub fn orderFrontCharacterPalette(&self, sender: Option<&Object>);
 
-        #[sel(hideOtherApplications:)]
+        #[method(hideOtherApplications:)]
         pub fn hideOtherApplications(&self, sender: Option<&Object>);
 
-        #[sel(stop:)]
+        #[method(stop:)]
         pub fn stop(&self, sender: Option<&Object>);
 
-        #[sel(activateIgnoringOtherApps:)]
+        #[method(activateIgnoringOtherApps:)]
         pub fn activateIgnoringOtherApps(&self, ignore: bool);
 
-        #[sel(requestUserAttention:)]
+        #[method(requestUserAttention:)]
         pub fn requestUserAttention(&self, type_: NSRequestUserAttentionType) -> NSInteger;
 
-        #[sel(setActivationPolicy:)]
+        #[method(setActivationPolicy:)]
         pub fn setActivationPolicy(&self, policy: NSApplicationActivationPolicy) -> bool;
 
-        #[sel(setMainMenu:)]
+        #[method(setMainMenu:)]
         pub fn setMainMenu(&self, menu: &NSMenu);
 
-        pub fn effectiveAppearance(&self) -> Id<NSAppearance, Shared> {
-            unsafe { msg_send_id![self, effectiveAppearance] }
-        }
+        #[method_id(effectiveAppearance)]
+        pub fn effectiveAppearance(&self) -> Id<NSAppearance, Shared>;
 
-        #[sel(setAppearance:)]
+        #[method(setAppearance:)]
         pub fn setAppearance(&self, appearance: Option<&NSAppearance>);
 
-        #[sel(run)]
+        #[method(run)]
         pub unsafe fn run(&self);
     }
 );

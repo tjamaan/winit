@@ -16,9 +16,8 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSMenuItem {
-        pub fn new() -> Id<Self, Shared> {
-            unsafe { msg_send_id![Self::class(), new] }
-        }
+        #[method_id(new)]
+        pub fn new() -> Id<Self, Shared>;
 
         pub fn newWithTitle(
             title: &NSString,
@@ -35,14 +34,13 @@ extern_methods!(
             }
         }
 
-        pub fn separatorItem() -> Id<Self, Shared> {
-            unsafe { msg_send_id![Self::class(), separatorItem] }
-        }
+        #[method_id(separatorItem)]
+        pub fn separatorItem() -> Id<Self, Shared>;
 
-        #[sel(setKeyEquivalentModifierMask:)]
+        #[method(setKeyEquivalentModifierMask:)]
         pub fn setKeyEquivalentModifierMask(&self, mask: NSEventModifierFlags);
 
-        #[sel(setSubmenu:)]
+        #[method(setSubmenu:)]
         pub fn setSubmenu(&self, submenu: &NSMenu);
     }
 );

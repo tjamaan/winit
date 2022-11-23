@@ -255,19 +255,19 @@ declare_class!(
     }
 
     unsafe impl WinitViewController {
-        #[sel(shouldAutorotate)]
+        #[method(shouldAutorotate)]
         fn should_autorotate(&self) -> bool {
             true
         }
     }
 
     unsafe impl WinitViewController {
-        #[sel(prefersStatusBarHidden)]
+        #[method(prefersStatusBarHidden)]
         fn prefers_status_bar_hidden(&self) -> bool {
             *self._prefers_status_bar_hidden
         }
 
-        #[sel(setPrefersStatusBarHidden:)]
+        #[method(setPrefersStatusBarHidden:)]
         fn set_prefers_status_bar_hidden(&mut self, val: bool) {
             *self._prefers_status_bar_hidden = val;
             unsafe {
@@ -275,12 +275,12 @@ declare_class!(
             }
         }
 
-        #[sel(prefersHomeIndicatorAutoHidden)]
+        #[method(prefersHomeIndicatorAutoHidden)]
         fn prefers_home_indicator_auto_hidden(&self) -> bool {
             *self._prefers_home_indicator_auto_hidden
         }
 
-        #[sel(setPrefersHomeIndicatorAutoHidden:)]
+        #[method(setPrefersHomeIndicatorAutoHidden:)]
         fn set_prefers_home_indicator_auto_hidden(&mut self, val: bool) {
             *self._prefers_home_indicator_auto_hidden = val;
             let os_capabilities = app_state::os_capabilities();
@@ -293,12 +293,12 @@ declare_class!(
             }
         }
 
-        #[sel(supportedInterfaceOrientations)]
+        #[method(supportedInterfaceOrientations)]
         fn supported_orientations(&self) -> UIInterfaceOrientationMask {
             *self._supported_orientations
         }
 
-        #[sel(setSupportedInterfaceOrientations:)]
+        #[method(setSupportedInterfaceOrientations:)]
         fn set_supported_orientations(&mut self, val: UIInterfaceOrientationMask) {
             *self._supported_orientations = val;
             unsafe {
@@ -309,12 +309,12 @@ declare_class!(
             }
         }
 
-        #[sel(preferredScreenEdgesDeferringSystemGestures)]
+        #[method(preferredScreenEdgesDeferringSystemGestures)]
         fn preferred_screen_edges_deferring_system_gestures(&self) -> UIRectEdge {
             *self._preferred_screen_edges_deferring_system_gestures
         }
 
-        #[sel(setPreferredScreenEdgesDeferringSystemGestures:)]
+        #[method(setPreferredScreenEdgesDeferringSystemGestures:)]
         fn set_preferred_screen_edges_deferring_system_gestures(&mut self, val: UIRectEdge) {
             *self._preferred_screen_edges_deferring_system_gestures = val;
             let os_capabilities = app_state::os_capabilities();
@@ -338,7 +338,7 @@ declare_class!(
     }
 
     unsafe impl WinitUIWindow {
-        #[sel(becomeKeyWindow)]
+        #[method(becomeKeyWindow)]
         fn become_key_window(&self) {
             unsafe {
                 app_state::handle_nonuser_event(EventWrapper::StaticEvent(Event::WindowEvent {
@@ -349,7 +349,7 @@ declare_class!(
             }
         }
 
-        #[sel(resignKeyWindow)]
+        #[method(resignKeyWindow)]
         fn resign_key_window(&self) {
             unsafe {
                 app_state::handle_nonuser_event(EventWrapper::StaticEvent(Event::WindowEvent {
@@ -478,7 +478,7 @@ declare_class!(
 
     // UIApplicationDelegate protocol
     unsafe impl WinitApplicationDelegate {
-        #[sel(application:didFinishLaunchingWithOptions:)]
+        #[method(application:didFinishLaunchingWithOptions:)]
         fn did_finish_launching(&self, _: id, _: id) -> bool {
             unsafe {
                 app_state::did_finish_launching();
@@ -486,22 +486,22 @@ declare_class!(
             true
         }
 
-        #[sel(applicationDidBecomeActive:)]
+        #[method(applicationDidBecomeActive:)]
         fn did_become_active(&self, _: id) {
             unsafe { app_state::handle_nonuser_event(EventWrapper::StaticEvent(Event::Resumed)) }
         }
 
-        #[sel(applicationWillResignActive:)]
+        #[method(applicationWillResignActive:)]
         fn will_resign_active(&self, _: id) {
             unsafe { app_state::handle_nonuser_event(EventWrapper::StaticEvent(Event::Suspended)) }
         }
 
-        #[sel(applicationWillEnterForeground:)]
+        #[method(applicationWillEnterForeground:)]
         fn will_enter_foreground(&self, _: id) {}
-        #[sel(applicationDidEnterBackground:)]
+        #[method(applicationDidEnterBackground:)]
         fn did_enter_background(&self, _: id) {}
 
-        #[sel(applicationWillTerminate:)]
+        #[method(applicationWillTerminate:)]
         fn will_terminate(&self, _: id) {
             unsafe {
                 let app: id = msg_send![class!(UIApplication), sharedApplication];

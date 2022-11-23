@@ -1,7 +1,7 @@
 use objc2::foundation::{CGFloat, NSArray, NSDictionary, NSNumber, NSObject, NSRect, NSString};
 use objc2::rc::{Id, Shared};
 use objc2::runtime::Object;
-use objc2::{extern_class, extern_methods, msg_send_id, ns_string, ClassType};
+use objc2::{extern_class, extern_methods, ns_string, ClassType};
 
 extern_class!(
     #[derive(Debug, PartialEq, Eq, Hash)]
@@ -17,26 +17,23 @@ extern_class!(
 extern_methods!(
     unsafe impl NSScreen {
         /// The application object must have been created.
-        pub fn main() -> Option<Id<Self, Shared>> {
-            unsafe { msg_send_id![Self::class(), mainScreen] }
-        }
+        #[method_id(mainScreen)]
+        pub fn main() -> Option<Id<Self, Shared>>;
 
         /// The application object must have been created.
-        pub fn screens() -> Id<NSArray<Self, Shared>, Shared> {
-            unsafe { msg_send_id![Self::class(), screens] }
-        }
+        #[method_id(screens)]
+        pub fn screens() -> Id<NSArray<Self, Shared>, Shared>;
 
-        #[sel(frame)]
+        #[method(frame)]
         pub fn frame(&self) -> NSRect;
 
-        #[sel(visibleFrame)]
+        #[method(visibleFrame)]
         pub fn visibleFrame(&self) -> NSRect;
 
+        #[method_id(deviceDescription)]
         pub fn deviceDescription(
             &self,
-        ) -> Id<NSDictionary<NSDeviceDescriptionKey, Object>, Shared> {
-            unsafe { msg_send_id![self, deviceDescription] }
-        }
+        ) -> Id<NSDictionary<NSDeviceDescriptionKey, Object>, Shared>;
 
         pub fn display_id(&self) -> u32 {
             let device_description = self.deviceDescription();
@@ -56,7 +53,7 @@ extern_methods!(
             obj.as_u32()
         }
 
-        #[sel(backingScaleFactor)]
+        #[method(backingScaleFactor)]
         pub fn backingScaleFactor(&self) -> CGFloat;
     }
 );

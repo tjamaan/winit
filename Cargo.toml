@@ -65,7 +65,7 @@ ndk = "0.7.0"
 android-activity = "0.4.0"
 
 [target.'cfg(any(target_os = "ios", target_os = "macos"))'.dependencies]
-objc2 = "=0.3.0-beta.3"
+objc2 = { version = "=0.3.0-beta.3", git = "https://github.com/madsmtm/objc2.git" }
 core-foundation = "0.9.3"
 
 [target.'cfg(target_os = "macos")'.dependencies]

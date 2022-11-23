@@ -18,7 +18,7 @@ extern_class!(
 extern_methods!(
     unsafe impl NSResponder {
         // TODO: Allow "immutably" on main thread
-        #[sel(interpretKeyEvents:)]
+        #[method(interpretKeyEvents:)]
         pub unsafe fn interpretKeyEvents(&mut self, events: &NSArray<NSEvent, Shared>);
     }
 );

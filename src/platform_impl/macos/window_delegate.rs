@@ -47,7 +47,7 @@ declare_class!(
     }
 
     unsafe impl WinitWindowDelegate {
-        #[sel(initWithWindow:initialFullscreen:)]
+        #[method(initWithWindow:initialFullscreen:)]
         fn init_with_winit(
             &mut self,
             window: &WinitWindow,
@@ -92,14 +92,14 @@ declare_class!(
 
     // NSWindowDelegate + NSDraggingDestination protocols
     unsafe impl WinitWindowDelegate {
-        #[sel(windowShouldClose:)]
+        #[method(windowShouldClose:)]
         fn window_should_close(&self, _: Option<&Object>) -> bool {
             trace_scope!("windowShouldClose:");
             self.emit_event(WindowEvent::CloseRequested);
             false
         }
 
-        #[sel(windowWillClose:)]
+        #[method(windowWillClose:)]
         fn window_will_close(&self, _: Option<&Object>) {
             trace_scope!("windowWillClose:");
             // `setDelegate:` retains the previous value and then autoreleases it
@@ -111,7 +111,7 @@ declare_class!(
             self.emit_event(WindowEvent::Destroyed);
         }
 
-        #[sel(windowDidResize:)]
+        #[method(windowDidResize:)]
         fn window_did_resize(&mut self, _: Option<&Object>) {
             trace_scope!("windowDidResize:");
             // NOTE: WindowEvent::Resized is reported in frameDidChange.
@@ -119,19 +119,19 @@ declare_class!(
         }
 
         // This won't be triggered if the move was part of a resize.
-        #[sel(windowDidMove:)]
+        #[method(windowDidMove:)]
         fn window_did_move(&mut self, _: Option<&Object>) {
             trace_scope!("windowDidMove:");
             self.emit_move_event();
         }
 
-        #[sel(windowDidChangeBackingProperties:)]
+        #[method(windowDidChangeBackingProperties:)]
         fn window_did_change_backing_properties(&mut self, _: Option<&Object>) {
             trace_scope!("windowDidChangeBackingProperties:");
             self.emit_static_scale_factor_changed_event();
         }
 
-        #[sel(windowDidBecomeKey:)]
+        #[method(windowDidBecomeKey:)]
         fn window_did_become_key(&self, _: Option<&Object>) {
             trace_scope!("windowDidBecomeKey:");
             // TODO: center the cursor if the window had mouse grab when it
@@ -139,7 +139,7 @@ declare_class!(
             self.emit_event(WindowEvent::Focused(true));
         }
 
-        #[sel(windowDidResignKey:)]
+        #[method(windowDidResignKey:)]
         fn window_did_resign_key(&self, _: Option<&Object>) {
             trace_scope!("windowDidResignKey:");
             // It happens rather often, e.g. when the user is Cmd+Tabbing, that the
@@ -163,7 +163,7 @@ declare_class!(
         }
 
         /// Invoked when the dragged image enters destination bounds or frame
-        #[sel(draggingEntered:)]
+        #[method(draggingEntered:)]
         fn dragging_entered(&self, sender: *mut Object) -> bool {
             trace_scope!("draggingEntered:");
 
@@ -182,14 +182,14 @@ declare_class!(
         }
 
         /// Invoked when the image is released
-        #[sel(prepareForDragOperation:)]
+        #[method(prepareForDragOperation:)]
         fn prepare_for_drag_operation(&self, _: Option<&Object>) -> bool {
             trace_scope!("prepareForDragOperation:");
             true
         }
 
         /// Invoked after the released image has been removed from the screen
-        #[sel(performDragOperation:)]
+        #[method(performDragOperation:)]
         fn perform_drag_operation(&self, sender: *mut Object) -> bool {
             trace_scope!("performDragOperation:");
 
@@ -208,20 +208,20 @@ declare_class!(
         }
 
         /// Invoked when the dragging operation is complete
-        #[sel(concludeDragOperation:)]
+        #[method(concludeDragOperation:)]
         fn conclude_drag_operation(&self, _: Option<&Object>) {
             trace_scope!("concludeDragOperation:");
         }
 
         /// Invoked when the dragging operation is cancelled
-        #[sel(draggingExited:)]
+        #[method(draggingExited:)]
         fn dragging_exited(&self, _: Option<&Object>) {
             trace_scope!("draggingExited:");
             self.emit_event(WindowEvent::HoveredFileCancelled);
         }
 
         /// Invoked when before enter fullscreen
-        #[sel(windowWillEnterFullScreen:)]
+        #[method(windowWillEnterFullScreen:)]
         fn window_will_enter_fullscreen(&self, _: Option<&Object>) {
             trace_scope!("windowWillEnterFullScreen:");
 
@@ -250,7 +250,7 @@ declare_class!(
         }
 
         /// Invoked when before exit fullscreen
-        #[sel(windowWillExitFullScreen:)]
+        #[method(windowWillExitFullScreen:)]
         fn window_will_exit_fullscreen(&self, _: Option<&Object>) {
             trace_scope!("windowWillExitFullScreen:");
 
@@ -258,7 +258,7 @@ declare_class!(
             shared_state.in_fullscreen_transition = true;
         }
 
-        #[sel(window:willUseFullScreenPresentationOptions:)]
+        #[method(window:willUseFullScreenPresentationOptions:)]
         fn window_will_use_fullscreen_presentation_options(
             &self,
             _: Option<&Object>,
@@ -287,7 +287,7 @@ declare_class!(
         }
 
         /// Invoked when entered fullscreen
-        #[sel(windowDidEnterFullScreen:)]
+        #[method(windowDidEnterFullScreen:)]
         fn window_did_enter_fullscreen(&mut self, _: Option<&Object>) {
             trace_scope!("windowDidEnterFullScreen:");
             *self.initial_fullscreen = false;
@@ -301,7 +301,7 @@ declare_class!(
         }
 
         /// Invoked when exited fullscreen
-        #[sel(windowDidExitFullScreen:)]
+        #[method(windowDidExitFullScreen:)]
         fn window_did_exit_fullscreen(&self, _: Option<&Object>) {
             trace_scope!("windowDidExitFullScreen:");
 
@@ -331,7 +331,7 @@ declare_class!(
         /// due to being in the midst of handling some other animation or user gesture.
         /// This method indicates that there was an error, and you should clean up any
         /// work you may have done to prepare to enter full-screen mode.
-        #[sel(windowDidFailToEnterFullScreen:)]
+        #[method(windowDidFailToEnterFullScreen:)]
         fn window_did_fail_to_enter_fullscreen(&self, _: Option<&Object>) {
             trace_scope!("windowDidFailToEnterFullScreen:");
             let mut shared_state = self
@@ -355,7 +355,7 @@ declare_class!(
         }
 
         // Invoked when the occlusion state of the window changes
-        #[sel(windowDidChangeOcclusionState:)]
+        #[method(windowDidChangeOcclusionState:)]
         fn window_did_change_occlusion_state(&self, _: Option<&Object>) {
             trace_scope!("windowDidChangeOcclusionState:");
             self.emit_event(WindowEvent::Occluded(
@@ -367,7 +367,7 @@ declare_class!(
         }
 
         // Observe theme change
-        #[sel(effectiveAppearanceDidChange:)]
+        #[method(effectiveAppearanceDidChange:)]
         fn effective_appearance_did_change(&self, sender: Option<&Object>) {
             trace_scope!("Triggered `effectiveAppearanceDidChange:`");
             unsafe {
@@ -380,7 +380,7 @@ declare_class!(
             }
         }
 
-        #[sel(effectiveAppearanceDidChangedOnMainThread:)]
+        #[method(effectiveAppearanceDidChangedOnMainThread:)]
         fn effective_appearance_did_changed_on_main_thread(&self, _: Option<&Object>) {
             let theme = get_ns_theme();
             let mut shared_state = self

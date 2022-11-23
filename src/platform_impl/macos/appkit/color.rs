@@ -1,6 +1,6 @@
 use objc2::foundation::NSObject;
 use objc2::rc::{Id, Shared};
-use objc2::{extern_class, extern_methods, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 
 extern_class!(
     /// An object that stores color data and sometimes opacity (alpha value).
@@ -21,8 +21,7 @@ unsafe impl Sync for NSColor {}
 
 extern_methods!(
     unsafe impl NSColor {
-        pub fn clear() -> Id<Self, Shared> {
-            unsafe { msg_send_id![Self::class(), clearColor] }
-        }
+        #[method_id(clearColor)]
+        pub fn clear() -> Id<Self, Shared>;
     }
 );

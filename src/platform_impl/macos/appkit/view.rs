@@ -5,7 +5,7 @@ use std::ptr;
 use objc2::foundation::{NSObject, NSPoint, NSRect};
 use objc2::rc::{Id, Shared};
 use objc2::runtime::Object;
-use objc2::{extern_class, extern_methods, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 
 use super::{NSCursor, NSResponder, NSTextInputContext};
 
@@ -31,43 +31,42 @@ extern_class!(
 extern_methods!(
     /// Getter methods
     unsafe impl NSView {
-        #[sel(frame)]
+        #[method(frame)]
         pub fn frame(&self) -> NSRect;
 
-        #[sel(bounds)]
+        #[method(bounds)]
         pub fn bounds(&self) -> NSRect;
 
+        #[method_id(inputContext)]
         pub fn inputContext(
             &self,
             // _mtm: MainThreadMarker,
-        ) -> Option<Id<NSTextInputContext, Shared>> {
-            unsafe { msg_send_id![self, inputContext] }
-        }
+        ) -> Option<Id<NSTextInputContext, Shared>>;
 
-        #[sel(visibleRect)]
+        #[method(visibleRect)]
         pub fn visibleRect(&self) -> NSRect;
 
-        #[sel(hasMarkedText)]
+        #[method(hasMarkedText)]
         pub fn hasMarkedText(&self) -> bool;
 
-        #[sel(convertPoint:fromView:)]
+        #[method(convertPoint:fromView:)]
         pub fn convertPoint_fromView(&self, point: NSPoint, view: Option<&NSView>) -> NSPoint;
     }
 
     unsafe impl NSView {
-        #[sel(setWantsBestResolutionOpenGLSurface:)]
+        #[method(setWantsBestResolutionOpenGLSurface:)]
         pub fn setWantsBestResolutionOpenGLSurface(&self, value: bool);
 
-        #[sel(setWantsLayer:)]
+        #[method(setWantsLayer:)]
         pub fn setWantsLayer(&self, wants_layer: bool);
 
-        #[sel(setPostsFrameChangedNotifications:)]
+        #[method(setPostsFrameChangedNotifications:)]
         pub fn setPostsFrameChangedNotifications(&mut self, value: bool);
 
-        #[sel(removeTrackingRect:)]
+        #[method(removeTrackingRect:)]
         pub fn removeTrackingRect(&self, tag: NSTrackingRectTag);
 
-        #[sel(addTrackingRect:owner:userData:assumeInside:)]
+        #[method(addTrackingRect:owner:userData:assumeInside:)]
         unsafe fn inner_addTrackingRect(
             &self,
             rect: NSRect,
@@ -82,11 +81,11 @@ extern_methods!(
                 .expect("failed creating tracking rect")
         }
 
-        #[sel(addCursorRect:cursor:)]
+        #[method(addCursorRect:cursor:)]
         // NSCursor safe to take by shared reference since it is already immutable
         pub fn addCursorRect(&self, rect: NSRect, cursor: &NSCursor);
 
-        #[sel(setHidden:)]
+        #[method(setHidden:)]
         pub fn setHidden(&self, hidden: bool);
     }
 );

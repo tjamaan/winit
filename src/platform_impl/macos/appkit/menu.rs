@@ -1,6 +1,6 @@
 use objc2::foundation::NSObject;
 use objc2::rc::{Id, Shared};
-use objc2::{extern_class, extern_methods, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 
 use super::NSMenuItem;
 
@@ -15,11 +15,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSMenu {
-        pub fn new() -> Id<Self, Shared> {
-            unsafe { msg_send_id![Self::class(), new] }
-        }
+        #[method_id(new)]
+        pub fn new() -> Id<Self, Shared>;
 
-        #[sel(addItem:)]
+        #[method(addItem:)]
         pub fn addItem(&self, item: &NSMenuItem);
     }
 );

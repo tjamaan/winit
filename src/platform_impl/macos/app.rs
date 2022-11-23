@@ -20,7 +20,7 @@ declare_class!(
         // Normally, holding Cmd + any key never sends us a `keyUp` event for that key.
         // Overriding `sendEvent:` like this fixes that. (https://stackoverflow.com/a/15294196)
         // Fun fact: Firefox still has this bug! (https://bugzilla.mozilla.org/show_bug.cgi?id=1299553)
-        #[sel(sendEvent:)]
+        #[method(sendEvent:)]
         fn send_event(&self, event: &NSEvent) {
             // For posterity, there are some undocumented event types
             // (https://github.com/servo/cocoa-rs/issues/155)

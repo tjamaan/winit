@@ -4,7 +4,7 @@ use objc2::foundation::{
 };
 use objc2::rc::{Id, Shared};
 use objc2::runtime::Object;
-use objc2::{extern_class, extern_methods, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 
 use super::{NSButton, NSColor, NSEvent, NSPasteboardType, NSResponder, NSScreen, NSView};
 
@@ -30,188 +30,183 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSWindow {
-        #[sel(frame)]
+        #[method(frame)]
         pub fn frame(&self) -> NSRect;
 
-        #[sel(backingScaleFactor)]
+        #[method(backingScaleFactor)]
         pub fn backingScaleFactor(&self) -> CGFloat;
 
-        pub fn contentView(&self) -> Id<NSView, Shared> {
-            unsafe { msg_send_id![self, contentView] }
-        }
+        #[method_id(contentView)]
+        pub fn contentView(&self) -> Id<NSView, Shared>;
 
-        #[sel(setContentView:)]
+        #[method(setContentView:)]
         pub fn setContentView(&self, view: &NSView);
 
-        #[sel(setInitialFirstResponder:)]
+        #[method(setInitialFirstResponder:)]
         pub fn setInitialFirstResponder(&self, view: &NSView);
 
-        #[sel(makeFirstResponder:)]
+        #[method(makeFirstResponder:)]
         #[must_use]
         pub fn makeFirstResponder(&self, responder: Option<&NSResponder>) -> bool;
 
-        #[sel(contentRectForFrameRect:)]
+        #[method(contentRectForFrameRect:)]
         pub fn contentRectForFrameRect(&self, windowFrame: NSRect) -> NSRect;
 
-        pub fn screen(&self) -> Option<Id<NSScreen, Shared>> {
-            unsafe { msg_send_id![self, screen] }
-        }
+        #[method_id(screen)]
+        pub fn screen(&self) -> Option<Id<NSScreen, Shared>>;
 
-        #[sel(setContentSize:)]
+        #[method(setContentSize:)]
         pub fn setContentSize(&self, contentSize: NSSize);
 
-        #[sel(setFrameTopLeftPoint:)]
+        #[method(setFrameTopLeftPoint:)]
         pub fn setFrameTopLeftPoint(&self, point: NSPoint);
 
-        #[sel(setMinSize:)]
+        #[method(setMinSize:)]
         pub fn setMinSize(&self, minSize: NSSize);
 
-        #[sel(setMaxSize:)]
+        #[method(setMaxSize:)]
         pub fn setMaxSize(&self, maxSize: NSSize);
 
-        #[sel(setResizeIncrements:)]
+        #[method(setResizeIncrements:)]
         pub fn setResizeIncrements(&self, increments: NSSize);
 
-        #[sel(contentResizeIncrements)]
+        #[method(contentResizeIncrements)]
         pub fn contentResizeIncrements(&self) -> NSSize;
 
-        #[sel(setContentResizeIncrements:)]
+        #[method(setContentResizeIncrements:)]
         pub fn setContentResizeIncrements(&self, increments: NSSize);
 
-        #[sel(setFrame:display:)]
+        #[method(setFrame:display:)]
         pub fn setFrame_display(&self, frameRect: NSRect, flag: bool);
 
-        #[sel(setMovable:)]
+        #[method(setMovable:)]
         pub fn setMovable(&self, movable: bool);
 
-        #[sel(setSharingType:)]
+        #[method(setSharingType:)]
         pub fn setSharingType(&self, sharingType: NSWindowSharingType);
 
-        #[sel(setOpaque:)]
+        #[method(setOpaque:)]
         pub fn setOpaque(&self, opaque: bool);
 
-        #[sel(hasShadow)]
+        #[method(hasShadow)]
         pub fn hasShadow(&self) -> bool;
 
-        #[sel(setHasShadow:)]
+        #[method(setHasShadow:)]
         pub fn setHasShadow(&self, has_shadow: bool);
 
-        #[sel(setIgnoresMouseEvents:)]
+        #[method(setIgnoresMouseEvents:)]
         pub fn setIgnoresMouseEvents(&self, ignores: bool);
 
-        #[sel(setBackgroundColor:)]
+        #[method(setBackgroundColor:)]
         pub fn setBackgroundColor(&self, color: &NSColor);
 
-        #[sel(styleMask)]
+        #[method(styleMask)]
         pub fn styleMask(&self) -> NSWindowStyleMask;
 
-        #[sel(setStyleMask:)]
+        #[method(setStyleMask:)]
         pub fn setStyleMask(&self, mask: NSWindowStyleMask);
 
-        #[sel(registerForDraggedTypes:)]
+        #[method(registerForDraggedTypes:)]
         pub fn registerForDraggedTypes(&self, types: &NSArray<NSPasteboardType>);
 
-        #[sel(makeKeyAndOrderFront:)]
+        #[method(makeKeyAndOrderFront:)]
         pub fn makeKeyAndOrderFront(&self, sender: Option<&Object>);
 
-        #[sel(miniaturize:)]
+        #[method(miniaturize:)]
         pub fn miniaturize(&self, sender: Option<&Object>);
 
-        #[sel(sender:)]
+        #[method(sender:)]
         pub fn deminiaturize(&self, sender: Option<&Object>);
 
-        #[sel(toggleFullScreen:)]
+        #[method(toggleFullScreen:)]
         pub fn toggleFullScreen(&self, sender: Option<&Object>);
 
-        #[sel(orderOut:)]
+        #[method(orderOut:)]
         pub fn orderOut(&self, sender: Option<&Object>);
 
-        #[sel(zoom:)]
+        #[method(zoom:)]
         pub fn zoom(&self, sender: Option<&Object>);
 
-        #[sel(selectNextKeyView:)]
+        #[method(selectNextKeyView:)]
         pub fn selectNextKeyView(&self, sender: Option<&Object>);
 
-        #[sel(selectPreviousKeyView:)]
+        #[method(selectPreviousKeyView:)]
         pub fn selectPreviousKeyView(&self, sender: Option<&Object>);
 
-        pub fn firstResponder(&self) -> Option<Id<NSResponder, Shared>> {
-            unsafe { msg_send_id![self, firstResponder] }
-        }
+        #[method_id(firstResponder)]
+        pub fn firstResponder(&self) -> Option<Id<NSResponder, Shared>>;
 
-        pub fn standardWindowButton(&self, kind: NSWindowButton) -> Option<Id<NSButton, Shared>> {
-            unsafe { msg_send_id![self, standardWindowButton: kind] }
-        }
+        #[method_id(standardWindowButton:)]
+        pub fn standardWindowButton(&self, kind: NSWindowButton) -> Option<Id<NSButton, Shared>>;
 
-        #[sel(setTitle:)]
+        #[method(setTitle:)]
         pub fn setTitle(&self, title: &NSString);
 
-        pub fn title_(&self) -> Id<NSString, Shared> {
-            unsafe { msg_send_id![self, title] }
-        }
+        #[method_id(title)]
+        pub fn title_(&self) -> Id<NSString, Shared>;
 
-        #[sel(setReleasedWhenClosed:)]
+        #[method(setReleasedWhenClosed:)]
         pub fn setReleasedWhenClosed(&self, val: bool);
 
-        #[sel(setAcceptsMouseMovedEvents:)]
+        #[method(setAcceptsMouseMovedEvents:)]
         pub fn setAcceptsMouseMovedEvents(&self, val: bool);
 
-        #[sel(setTitlebarAppearsTransparent:)]
+        #[method(setTitlebarAppearsTransparent:)]
         pub fn setTitlebarAppearsTransparent(&self, val: bool);
 
-        #[sel(setTitleVisibility:)]
+        #[method(setTitleVisibility:)]
         pub fn setTitleVisibility(&self, visibility: NSWindowTitleVisibility);
 
-        #[sel(setMovableByWindowBackground:)]
+        #[method(setMovableByWindowBackground:)]
         pub fn setMovableByWindowBackground(&self, val: bool);
 
-        #[sel(setLevel:)]
+        #[method(setLevel:)]
         pub fn setLevel(&self, level: NSWindowLevel);
 
-        #[sel(setDocumentEdited:)]
+        #[method(setDocumentEdited:)]
         pub fn setDocumentEdited(&self, val: bool);
 
-        #[sel(occlusionState)]
+        #[method(occlusionState)]
         pub fn occlusionState(&self) -> NSWindowOcclusionState;
 
-        #[sel(center)]
+        #[method(center)]
         pub fn center(&self);
 
-        #[sel(isResizable)]
+        #[method(isResizable)]
         pub fn isResizable(&self) -> bool;
 
-        #[sel(isMiniaturizable)]
+        #[method(isMiniaturizable)]
         pub fn isMiniaturizable(&self) -> bool;
 
-        #[sel(hasCloseBox)]
+        #[method(hasCloseBox)]
         pub fn hasCloseBox(&self) -> bool;
 
-        #[sel(isMiniaturized)]
+        #[method(isMiniaturized)]
         pub fn isMiniaturized(&self) -> bool;
 
-        #[sel(isVisible)]
+        #[method(isVisible)]
         pub fn isVisible(&self) -> bool;
 
-        #[sel(isZoomed)]
+        #[method(isZoomed)]
         pub fn isZoomed(&self) -> bool;
 
-        #[sel(isDocumentEdited)]
+        #[method(isDocumentEdited)]
         pub fn isDocumentEdited(&self) -> bool;
 
-        #[sel(close)]
+        #[method(close)]
         pub fn close(&self);
 
-        #[sel(performWindowDragWithEvent:)]
+        #[method(performWindowDragWithEvent:)]
         // TODO: Can this actually accept NULL?
         pub fn performWindowDragWithEvent(&self, event: Option<&NSEvent>);
 
-        #[sel(invalidateCursorRectsForView:)]
+        #[method(invalidateCursorRectsForView:)]
         pub fn invalidateCursorRectsForView(&self, view: &NSView);
 
-        #[sel(setDelegate:)]
+        #[method(setDelegate:)]
         pub fn setDelegate(&self, delegate: Option<&NSObject>);
 
-        #[sel(sendEvent:)]
+        #[method(sendEvent:)]
         pub unsafe fn sendEvent(&self, event: &NSEvent);
     }
 );

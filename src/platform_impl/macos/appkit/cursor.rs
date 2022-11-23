@@ -100,12 +100,11 @@ extern_methods!(
 
     /// Undocumented cursors
     unsafe impl NSCursor {
-        #[sel(respondsToSelector:)]
+        #[method(respondsToSelector:)]
         fn class_responds_to(sel: Sel) -> bool;
 
-        unsafe fn from_selector_unchecked(sel: Sel) -> Id<Self, Shared> {
-            unsafe { msg_send_id![Self::class(), performSelector: sel] }
-        }
+        #[method_id(performSelector:)]
+        unsafe fn from_selector_unchecked(sel: Sel) -> Id<Self, Shared>;
 
         unsafe fn from_selector(sel: Sel) -> Option<Id<Self, Shared>> {
             if Self::class_responds_to(sel) {

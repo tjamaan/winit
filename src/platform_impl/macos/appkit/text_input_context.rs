@@ -1,6 +1,6 @@
 use objc2::foundation::{NSObject, NSString};
 use objc2::rc::{Id, Shared};
-use objc2::{extern_class, extern_methods, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 
 type NSTextInputSourceIdentifier = NSString;
 
@@ -16,16 +16,15 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextInputContext {
-        #[sel(invalidateCharacterCoordinates)]
+        #[method(invalidateCharacterCoordinates)]
         pub fn invalidateCharacterCoordinates(&self);
 
-        #[sel(discardMarkedText)]
+        #[method(discardMarkedText)]
         pub fn discardMarkedText(&self);
 
+        #[method_id(selectedKeyboardInputSource)]
         pub fn selectedKeyboardInputSource(
             &self,
-        ) -> Option<Id<NSTextInputSourceIdentifier, Shared>> {
-            unsafe { msg_send_id![self, selectedKeyboardInputSource] }
-        }
+        ) -> Option<Id<NSTextInputSourceIdentifier, Shared>>;
     }
 );

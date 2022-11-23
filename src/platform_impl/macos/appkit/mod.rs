@@ -28,6 +28,7 @@ mod text_input_context;
 mod version;
 mod view;
 mod window;
+mod text_input_client;
 
 pub(crate) use self::appearance::NSAppearance;
 pub(crate) use self::application::{
@@ -50,6 +51,7 @@ pub(crate) use self::responder::NSResponder;
 #[allow(unused_imports)]
 pub(crate) use self::screen::{NSDeviceDescriptionKey, NSScreen};
 pub(crate) use self::text_input_context::NSTextInputContext;
+pub(crate) use self::text_input_client::NSTextInputClient;
 pub(crate) use self::version::NSAppKitVersion;
 pub(crate) use self::view::{NSTrackingRectTag, NSView};
 pub(crate) use self::window::{

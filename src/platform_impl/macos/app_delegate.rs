@@ -20,7 +20,7 @@ declare_class!(
     }
 
     unsafe impl ApplicationDelegate {
-        #[sel(initWithActivationPolicy:defaultMenu:activateIgnoringOtherApps:)]
+        #[method(initWithActivationPolicy:defaultMenu:activateIgnoringOtherApps:)]
         fn init(
             &mut self,
             activation_policy: NSApplicationActivationPolicy,
@@ -36,7 +36,7 @@ declare_class!(
             })
         }
 
-        #[sel(applicationDidFinishLaunching:)]
+        #[method(applicationDidFinishLaunching:)]
         fn did_finish_launching(&self, _sender: *const Object) {
             trace_scope!("applicationDidFinishLaunching:");
             AppState::launched(
@@ -46,7 +46,7 @@ declare_class!(
             );
         }
 
-        #[sel(applicationWillTerminate:)]
+        #[method(applicationWillTerminate:)]
         fn will_terminate(&self, _sender: *const Object) {
             trace_scope!("applicationWillTerminate:");
             // TODO: Notify every window that it will be destroyed, like done in iOS?

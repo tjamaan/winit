@@ -23,6 +23,8 @@ pub mod ios;
 pub mod macos;
 #[cfg(orbital_platform)]
 pub mod orbital;
+#[cfg(free_unix)]
+pub mod unix;
 #[cfg(wayland_platform)]
 pub mod wayland;
 #[cfg(wasm_platform)]
@@ -32,6 +34,7 @@ pub mod windows;
 #[cfg(x11_platform)]
 pub mod x11;
 
+pub mod modifier_supplement;
 #[cfg(any(
     windows_platform,
     macos_platform,
@@ -41,3 +44,4 @@ pub mod x11;
     orbital_platform
 ))]
 pub mod run_return;
+pub mod scancode;

@@ -1,10 +1,16 @@
 use std::{ffi::c_void, path::Path};
 
+use windows_sys::Win32::{
+    System::SystemServices::LANG_KOREAN, UI::Input::KeyboardAndMouse::GetKeyboardLayout,
+};
+
 use crate::{
     dpi::PhysicalSize,
-    event::DeviceId,
+    event::{DeviceId, KeyEvent},
     event_loop::EventLoopBuilder,
+    keyboard::{Key, KeyCode, NativeKeyCode},
     monitor::MonitorHandle,
+    platform::{modifier_supplement::KeyEventExtModifierSupplement, scancode::KeyCodeExtScancode},
     platform_impl::WinIcon,
     window::{BadIcon, Icon, Window, WindowBuilder},
 };
@@ -342,5 +348,17 @@ impl IconExtWindows for Icon {
     fn from_resource(ordinal: u16, size: Option<PhysicalSize<u32>>) -> Result<Self, BadIcon> {
         let win_icon = WinIcon::from_resource(ordinal, size)?;
         Ok(Icon { inner: win_icon })
+    }
+}
+
+impl KeyEventExtModifierSupplement for KeyEvent {
+    #[inline]
+    fn text_with_all_modifiers(&self) -> Option<&str> {
+        self.platform_specific.text_with_all_modifers
+    }
+
+    #[inline]
+    fn key_without_modifiers(&self) -> Key<'static> {
+        self.platform_specific.key_without_modifiers
     }
 }

@@ -33,6 +33,7 @@ use crate::{
         ControlFlow, DeviceEventFilter, EventLoopClosed, EventLoopWindowTarget as RootELW,
     },
     icon::Icon,
+    keyboard::Key,
     window::{
         CursorGrabMode, CursorIcon, Theme, UserAttentionType, WindowAttributes, WindowButtons,
         WindowLevel,
@@ -46,6 +47,15 @@ pub(self) use crate::platform_impl::Fullscreen;
 pub mod wayland;
 #[cfg(x11_platform)]
 pub mod x11;
+
+#[cfg(any(feature = "x11", feature = "wayland"))]
+pub mod common;
+
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+pub struct KeyEventExtra {
+    pub key_without_modifiers: Key<'static>,
+    pub text_with_all_modifiers: Option<&'static str>,
+}
 
 /// Environment variable specifying which backend should be used on unix platform.
 ///
@@ -497,6 +507,11 @@ impl Window {
     #[inline]
     pub fn set_ime_position(&self, position: Position) {
         x11_or_wayland!(match self; Window(w) => w.set_ime_position(position))
+    }
+
+    #[inline]
+    pub fn reset_dead_keys(&self) {
+        common::xkb_state::reset_dead_keys()
     }
 
     #[inline]

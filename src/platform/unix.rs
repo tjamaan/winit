@@ -13,7 +13,7 @@ impl KeyEventExtModifierSupplement for KeyEvent {
 
     #[inline]
     fn key_without_modifiers(&self) -> Key<'static> {
-        self.platform_specific.key_without_modifiers
+        self.platform_specific.key_without_modifiers.clone()
     }
 }
 

@@ -49,7 +49,7 @@ use crate::{
 ///
 /// See the module-level docs for more information on the event loop manages each event.
 #[derive(Debug, PartialEq)]
-pub enum Event<'a, T: 'static> {
+pub enum Event<'a, T: 'static = ()> {
     /// Emitted when new events arrive from the OS to be processed.
     ///
     /// This event type is useful as a place to put code that should be done before you start

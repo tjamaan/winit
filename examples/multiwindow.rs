@@ -5,24 +5,37 @@ use std::collections::HashMap;
 use simple_logger::SimpleLogger;
 use winit::{
     event::{ElementState, Event, KeyboardInput, VirtualKeyCode, WindowEvent},
-    event_loop::EventLoop,
-    window::Window,
+    event_loop::{ControlFlow, EventLoop, EventLoopHandler, EventLoopWindowTarget},
+    window::{Window, WindowId},
 };
 
-fn main() {
-    SimpleLogger::new().init().unwrap();
-    let event_loop = EventLoop::new();
+#[derive(Debug)]
+struct Application {
+    windows: HashMap<WindowId, Window>,
+}
 
-    let mut windows = HashMap::new();
-    for _ in 0..3 {
-        let window = Window::new(&event_loop).unwrap();
-        println!("Opened a new window: {:?}", window.id());
-        windows.insert(window.id(), window);
+impl EventLoopHandler for Application {
+    type InitialData = ();
+
+    fn on_init(_: Self::InitialData, event_loop: &EventLoopWindowTarget) -> Self {
+        let mut windows = HashMap::new();
+        for _ in 0..3 {
+            let window = Window::new(&event_loop).unwrap();
+            println!("Opened a new window: {:?}", window.id());
+            windows.insert(window.id(), window);
+        }
+
+        println!("Press N to open a new window.");
+
+        Self { windows }
     }
 
-    println!("Press N to open a new window.");
-
-    event_loop.run(move |event, event_loop, control_flow| {
+    fn on_event(
+        &mut self,
+        event_loop: &EventLoopWindowTarget,
+        control_flow: &mut ControlFlow,
+        event: Event<'static>,
+    ) {
         control_flow.set_wait();
 
         match event {
@@ -32,9 +45,9 @@ fn main() {
                         println!("Window {:?} has received the signal to close", window_id);
 
                         // This drops the window, causing it to close.
-                        windows.remove(&window_id);
+                        self.windows.remove(&window_id);
 
-                        if windows.is_empty() {
+                        if self.windows.is_empty() {
                             control_flow.set_exit();
                         }
                     }
@@ -50,12 +63,19 @@ fn main() {
                     } => {
                         let window = Window::new(event_loop).unwrap();
                         println!("Opened a new window: {:?}", window.id());
-                        windows.insert(window.id(), window);
+                        self.windows.insert(window.id(), window);
                     }
                     _ => (),
                 }
             }
             _ => (),
         }
-    })
+    }
+}
+
+fn main() {
+    SimpleLogger::new().init().unwrap();
+
+    let event_loop = EventLoop::new();
+    event_loop.run_with_handler::<Application>(());
 }

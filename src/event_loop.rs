@@ -15,7 +15,13 @@ use instant::Instant;
 use once_cell::sync::OnceCell;
 use raw_window_handle::{HasRawDisplayHandle, RawDisplayHandle};
 
-use crate::{event::Event, monitor::MonitorHandle, platform_impl};
+use crate::{
+    dpi::PhysicalSize,
+    event::{Event, StartCause, WindowEvent},
+    monitor::MonitorHandle,
+    platform_impl,
+    window::WindowId,
+};
 
 /// Provides a way to retrieve events from the system and from the windows that were registered to
 /// the events loop.
@@ -43,7 +49,7 @@ pub struct EventLoop<T: 'static> {
 /// your callback. [`EventLoop`] will coerce into this type (`impl<T> Deref for
 /// EventLoop<T>`), so functions that take this as a parameter can also take
 /// `&EventLoop`.
-pub struct EventLoopWindowTarget<T: 'static> {
+pub struct EventLoopWindowTarget<T: 'static = ()> {
     pub(crate) p: platform_impl::EventLoopWindowTarget<T>,
     pub(crate) _marker: PhantomData<*mut ()>, // Not Send nor Sync
 }
@@ -243,6 +249,35 @@ impl Default for ControlFlow {
     }
 }
 
+/// TODO
+pub trait EventLoopHandler<T = ()> {
+    /// TODO
+    type InitialData;
+
+    /// TODO
+    fn on_init(initial_data: Self::InitialData, event_loop: &EventLoopWindowTarget<T>) -> Self;
+
+    /// TODO
+    fn on_event(
+        &mut self,
+        event_loop: &EventLoopWindowTarget<T>,
+        control_flow: &mut ControlFlow,
+        event: Event<'static, T>,
+    );
+
+    /// TODO
+    fn on_scale_factor_changed(
+        &mut self,
+        _event_loop: &EventLoopWindowTarget<T>,
+        _control_flow: &mut ControlFlow,
+        _window_id: WindowId,
+        _new_scale_factor: f64,
+        suggested_window_size: PhysicalSize<u32>,
+    ) -> PhysicalSize<u32> {
+        suggested_window_size
+    }
+}
+
 impl EventLoop<()> {
     /// Alias for [`EventLoopBuilder::new().build()`].
     ///
@@ -286,6 +321,49 @@ impl<T> EventLoop<T> {
         F: 'static + FnMut(Event<'_, T>, &EventLoopWindowTarget<T>, &mut ControlFlow),
     {
         self.event_loop.run(event_handler)
+    }
+
+    pub fn run_with_handler<H: EventLoopHandler<T> + 'static>(
+        self,
+        initial_data: H::InitialData,
+    ) -> ! {
+        let mut initial_data = Some(initial_data);
+        let mut handler = None;
+
+        self.run(move |event, event_loop, control_flow| {
+            if let Event::NewEvents(StartCause::Init) = event {
+                handler = Some(H::on_init(
+                    initial_data.take().expect("got `StartCause::Init` twice"),
+                    &event_loop,
+                ));
+                return;
+            }
+            let handler = handler
+                .as_mut()
+                .expect("`StartCause::Init` must be the first event");
+
+            if let Event::WindowEvent {
+                window_id,
+                event:
+                    WindowEvent::ScaleFactorChanged {
+                        scale_factor,
+                        new_inner_size,
+                    },
+            } = event
+            {
+                *new_inner_size = handler.on_scale_factor_changed(
+                    event_loop,
+                    control_flow,
+                    window_id,
+                    scale_factor,
+                    *new_inner_size,
+                );
+            } else if let Some(event) = event.to_static() {
+                handler.on_event(event_loop, control_flow, event);
+            } else {
+                unreachable!("invalid event");
+            }
+        })
     }
 
     /// Creates an [`EventLoopProxy`] that can be used to dispatch user events to the main event loop.

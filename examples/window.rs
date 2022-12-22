@@ -3,21 +3,34 @@
 use simple_logger::SimpleLogger;
 use winit::{
     event::{Event, WindowEvent},
-    event_loop::EventLoop,
-    window::WindowBuilder,
+    event_loop::{ControlFlow, EventLoop, EventLoopHandler, EventLoopWindowTarget},
+    window::{Window, WindowBuilder},
 };
 
-fn main() {
-    SimpleLogger::new().init().unwrap();
-    let event_loop = EventLoop::new();
+#[derive(Debug)]
+struct Application {
+    window: Window,
+}
 
-    let window = WindowBuilder::new()
-        .with_title("A fantastic window!")
-        .with_inner_size(winit::dpi::LogicalSize::new(128.0, 128.0))
-        .build(&event_loop)
-        .unwrap();
+impl EventLoopHandler for Application {
+    type InitialData = ();
 
-    event_loop.run(move |event, _, control_flow| {
+    fn on_init(_: Self::InitialData, event_loop: &EventLoopWindowTarget) -> Self {
+        Self {
+            window: WindowBuilder::new()
+                .with_title("A fantastic window!")
+                .with_inner_size(winit::dpi::LogicalSize::new(128.0, 128.0))
+                .build(event_loop)
+                .unwrap(),
+        }
+    }
+
+    fn on_event(
+        &mut self,
+        _: &EventLoopWindowTarget,
+        control_flow: &mut ControlFlow,
+        event: Event<'static>,
+    ) {
         control_flow.set_wait();
         println!("{:?}", event);
 
@@ -25,11 +38,18 @@ fn main() {
             Event::WindowEvent {
                 event: WindowEvent::CloseRequested,
                 window_id,
-            } if window_id == window.id() => control_flow.set_exit(),
+            } if window_id == self.window.id() => control_flow.set_exit(),
             Event::MainEventsCleared => {
-                window.request_redraw();
+                self.window.request_redraw();
             }
             _ => (),
         }
-    });
+    }
+}
+
+fn main() {
+    SimpleLogger::new().init().unwrap();
+
+    let event_loop = EventLoop::new();
+    event_loop.run_with_handler::<Application>(());
 }

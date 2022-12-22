@@ -15,7 +15,11 @@ struct Application {
 impl EventLoopHandler for Application {
     type InitialData = ();
 
-    fn on_init(_: Self::InitialData, event_loop: &EventLoopWindowTarget) -> Self {
+    fn on_init(
+        _: Self::InitialData,
+        event_loop: &EventLoopWindowTarget,
+        _: &mut ControlFlow,
+    ) -> Self {
         Self {
             window: WindowBuilder::new()
                 .with_title("A fantastic window!")

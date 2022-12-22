@@ -31,7 +31,11 @@ struct Application {
 impl EventLoopHandler for Application {
     type InitialData = ();
 
-    fn on_init(_: Self::InitialData, event_loop: &EventLoopWindowTarget) -> Self {
+    fn on_init(
+        _: Self::InitialData,
+        event_loop: &EventLoopWindowTarget,
+        _: &mut ControlFlow,
+    ) -> Self {
         println!("Press '1' to switch to Wait mode.");
         println!("Press '2' to switch to WaitUntil mode.");
         println!("Press '3' to switch to Poll mode.");

@@ -255,7 +255,11 @@ pub trait EventLoopHandler<T = ()> {
     type InitialData;
 
     /// TODO
-    fn on_init(initial_data: Self::InitialData, event_loop: &EventLoopWindowTarget<T>) -> Self;
+    fn on_init(
+        initial_data: Self::InitialData,
+        event_loop: &EventLoopWindowTarget<T>,
+        control_flow: &mut ControlFlow,
+    ) -> Self;
 
     /// TODO
     fn on_event(
@@ -330,38 +334,42 @@ impl<T> EventLoop<T> {
         let mut initial_data = Some(initial_data);
         let mut handler = None;
 
-        self.run(move |event, event_loop, control_flow| {
-            match event {
-                Event::NewEvents(StartCause::Init) => {
-                    handler = Some(H::on_init(
-                        initial_data.take().expect("got `StartCause::Init` twice"),
-                        &event_loop,
-                    ));
-                }
-                Event::LoopDestroyed => {
-                    drop(handler.take());
-                }
-                Event::WindowEvent {
-                    window_id,
-                    event: WindowEvent::ScaleFactorChanged {
+        self.run(move |event, event_loop, control_flow| match event {
+            Event::NewEvents(StartCause::Init) => {
+                handler = Some(H::on_init(
+                    initial_data.take().expect("got `StartCause::Init` twice"),
+                    &event_loop,
+                    control_flow,
+                ));
+            }
+            Event::LoopDestroyed => {
+                drop(handler.take());
+            }
+            Event::WindowEvent {
+                window_id,
+                event:
+                    WindowEvent::ScaleFactorChanged {
                         scale_factor,
                         new_inner_size,
                     },
-                } => {
-                    let handler = handler.as_mut().expect("`StartCause::Init` must be the first event");
-                    *new_inner_size = handler.on_scale_factor_changed(
-                        event_loop,
-                        control_flow,
-                        window_id,
-                        scale_factor,
-                        *new_inner_size,
-                    );
-                }
-                event => {
-                    let handler = handler.as_mut().expect("`StartCause::Init` must be the first event");
-                    let event = event.to_static().expect("invalid event");
-                    handler.on_event(event_loop, control_flow, event);
-                }
+            } => {
+                let handler = handler
+                    .as_mut()
+                    .expect("`StartCause::Init` must be the first event");
+                *new_inner_size = handler.on_scale_factor_changed(
+                    event_loop,
+                    control_flow,
+                    window_id,
+                    scale_factor,
+                    *new_inner_size,
+                );
+            }
+            event => {
+                let handler = handler
+                    .as_mut()
+                    .expect("`StartCause::Init` must be the first event");
+                let event = event.to_static().expect("invalid event");
+                handler.on_event(event_loop, control_flow, event);
             }
         })
     }

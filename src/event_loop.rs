@@ -331,37 +331,37 @@ impl<T> EventLoop<T> {
         let mut handler = None;
 
         self.run(move |event, event_loop, control_flow| {
-            if let Event::NewEvents(StartCause::Init) = event {
-                handler = Some(H::on_init(
-                    initial_data.take().expect("got `StartCause::Init` twice"),
-                    &event_loop,
-                ));
-                return;
-            }
-            let handler = handler
-                .as_mut()
-                .expect("`StartCause::Init` must be the first event");
-
-            if let Event::WindowEvent {
-                window_id,
-                event:
-                    WindowEvent::ScaleFactorChanged {
+            match event {
+                Event::NewEvents(StartCause::Init) => {
+                    handler = Some(H::on_init(
+                        initial_data.take().expect("got `StartCause::Init` twice"),
+                        &event_loop,
+                    ));
+                }
+                Event::LoopDestroyed => {
+                    drop(handler.take());
+                }
+                Event::WindowEvent {
+                    window_id,
+                    event: WindowEvent::ScaleFactorChanged {
                         scale_factor,
                         new_inner_size,
                     },
-            } = event
-            {
-                *new_inner_size = handler.on_scale_factor_changed(
-                    event_loop,
-                    control_flow,
-                    window_id,
-                    scale_factor,
-                    *new_inner_size,
-                );
-            } else if let Some(event) = event.to_static() {
-                handler.on_event(event_loop, control_flow, event);
-            } else {
-                unreachable!("invalid event");
+                } => {
+                    let handler = handler.as_mut().expect("`StartCause::Init` must be the first event");
+                    *new_inner_size = handler.on_scale_factor_changed(
+                        event_loop,
+                        control_flow,
+                        window_id,
+                        scale_factor,
+                        *new_inner_size,
+                    );
+                }
+                event => {
+                    let handler = handler.as_mut().expect("`StartCause::Init` must be the first event");
+                    let event = event.to_static().expect("invalid event");
+                    handler.on_event(event_loop, control_flow, event);
+                }
             }
         })
     }

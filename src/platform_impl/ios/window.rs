@@ -6,7 +6,7 @@ use std::{
     ops::{Deref, DerefMut},
 };
 
-use objc2::foundation::{CGFloat, CGPoint, CGRect, CGSize, MainThreadMarker};
+use icrate::Foundation::{CGFloat, CGPoint, CGRect, CGSize, MainThreadMarker};
 use objc2::rc::{Id, Shared};
 use objc2::runtime::Object;
 use objc2::{class, msg_send};

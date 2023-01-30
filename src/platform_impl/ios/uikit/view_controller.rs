@@ -1,5 +1,5 @@
+use icrate::Foundation::{NSObject, NSUInteger};
 use objc2::encode::{Encode, Encoding};
-use objc2::foundation::{NSObject, NSUInteger};
 use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, msg_send_id, ClassType};
 
@@ -17,23 +17,22 @@ extern_class!(
 
 extern_methods!(
     unsafe impl UIViewController {
-        #[sel(attemptRotationToDeviceOrientation)]
+        #[method(attemptRotationToDeviceOrientation)]
         pub fn attemptRotationToDeviceOrientation();
 
-        #[sel(setNeedsStatusBarAppearanceUpdate)]
+        #[method(setNeedsStatusBarAppearanceUpdate)]
         pub fn setNeedsStatusBarAppearanceUpdate(&self);
 
-        #[sel(setNeedsUpdateOfHomeIndicatorAutoHidden)]
+        #[method(setNeedsUpdateOfHomeIndicatorAutoHidden)]
         pub fn setNeedsUpdateOfHomeIndicatorAutoHidden(&self);
 
-        #[sel(setNeedsUpdateOfScreenEdgesDeferringSystemGestures)]
+        #[method(setNeedsUpdateOfScreenEdgesDeferringSystemGestures)]
         pub fn setNeedsUpdateOfScreenEdgesDeferringSystemGestures(&self);
 
-        pub fn view(&self) -> Option<Id<UIView, Shared>> {
-            unsafe { msg_send_id![self, view] }
-        }
+        #[method_id(view)]
+        pub fn view(&self) -> Option<Id<UIView, Shared>>;
 
-        #[sel(setView:)]
+        #[method(setView:)]
         pub fn setView(&self, view: Option<&UIView>);
     }
 );

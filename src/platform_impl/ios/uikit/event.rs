@@ -1,4 +1,4 @@
-use objc2::foundation::NSObject;
+use objc2::runtime::NSObject;
 use objc2::{extern_class, ClassType};
 
 extern_class!(

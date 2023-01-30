@@ -1,6 +1,6 @@
 #![allow(clippy::unnecessary_cast)]
 
-use objc2::foundation::{CGFloat, CGRect, MainThreadMarker, NSObject, NSSet};
+use icrate::Foundation::{CGFloat, CGRect, MainThreadMarker, NSObject, NSSet};
 use objc2::rc::{Id, Shared};
 use objc2::runtime::Class;
 use objc2::{declare_class, extern_methods, msg_send, msg_send_id, ClassType};
@@ -35,7 +35,7 @@ declare_class!(
     }
 
     unsafe impl WinitView {
-        #[sel(drawRect:)]
+        #[method(drawRect:)]
         fn draw_rect(&self, rect: CGRect) {
             let window = self.window().unwrap();
             unsafe {
@@ -51,7 +51,7 @@ declare_class!(
             let _: () = unsafe { msg_send![super(self), drawRect: rect] };
         }
 
-        #[sel(layoutSubviews)]
+        #[method(layoutSubviews)]
         fn layout_subviews(&self) {
             let _: () = unsafe { msg_send![super(self), layoutSubviews] };
 
@@ -83,7 +83,7 @@ declare_class!(
             }
         }
 
-        #[sel(setContentScaleFactor:)]
+        #[method(setContentScaleFactor:)]
         fn set_content_scale_factor(&self, untrusted_scale_factor: CGFloat) {
             let _: () =
                 unsafe { msg_send![super(self), setContentScaleFactor: untrusted_scale_factor] };
@@ -133,22 +133,22 @@ declare_class!(
             }
         }
 
-        #[sel(touchesBegan:withEvent:)]
+        #[method(touchesBegan:withEvent:)]
         fn touches_began(&self, touches: &NSSet<UITouch>, _event: Option<&UIEvent>) {
             self.handle_touches(touches)
         }
 
-        #[sel(touchesMoved:withEvent:)]
+        #[method(touchesMoved:withEvent:)]
         fn touches_moved(&self, touches: &NSSet<UITouch>, _event: Option<&UIEvent>) {
             self.handle_touches(touches)
         }
 
-        #[sel(touchesEnded:withEvent:)]
+        #[method(touchesEnded:withEvent:)]
         fn touches_ended(&self, touches: &NSSet<UITouch>, _event: Option<&UIEvent>) {
             self.handle_touches(touches)
         }
 
-        #[sel(touchesCancelled:withEvent:)]
+        #[method(touchesCancelled:withEvent:)]
         fn touches_cancelled(&self, touches: &NSSet<UITouch>, _event: Option<&UIEvent>) {
             self.handle_touches(touches)
         }
@@ -158,16 +158,14 @@ declare_class!(
 extern_methods!(
     #[allow(non_snake_case)]
     unsafe impl WinitView {
-        fn window(&self) -> Option<Id<WinitUIWindow, Shared>> {
-            unsafe { msg_send_id![self, window] }
-        }
+        #[method_id(window)]
+        fn window(&self) -> Option<Id<WinitUIWindow, Shared>>;
 
-        unsafe fn traitCollection(&self) -> Id<UITraitCollection, Shared> {
-            msg_send_id![self, traitCollection]
-        }
+        #[method_id(traitCollection)]
+        unsafe fn traitCollection(&self) -> Id<UITraitCollection, Shared>;
 
         // TODO: Allow the user to customize this
-        #[sel(layerClass)]
+        #[method(layerClass)]
         pub(crate) fn layerClass() -> &'static Class;
     }
 );
@@ -275,30 +273,30 @@ declare_class!(
     }
 
     unsafe impl WinitViewController {
-        #[sel(shouldAutorotate)]
+        #[method(shouldAutorotate)]
         fn should_autorotate(&self) -> bool {
             true
         }
     }
 
     unsafe impl WinitViewController {
-        #[sel(prefersStatusBarHidden)]
+        #[method(prefersStatusBarHidden)]
         fn prefers_status_bar_hidden(&self) -> bool {
             *self._prefers_status_bar_hidden
         }
 
-        #[sel(setPrefersStatusBarHidden:)]
+        #[method(setPrefersStatusBarHidden:)]
         fn set_prefers_status_bar_hidden(&mut self, val: bool) {
             *self._prefers_status_bar_hidden = val;
             self.setNeedsStatusBarAppearanceUpdate();
         }
 
-        #[sel(prefersHomeIndicatorAutoHidden)]
+        #[method(prefersHomeIndicatorAutoHidden)]
         fn prefers_home_indicator_auto_hidden(&self) -> bool {
             *self._prefers_home_indicator_auto_hidden
         }
 
-        #[sel(setPrefersHomeIndicatorAutoHidden:)]
+        #[method(setPrefersHomeIndicatorAutoHidden:)]
         fn set_prefers_home_indicator_auto_hidden(&mut self, val: bool) {
             *self._prefers_home_indicator_auto_hidden = val;
             let os_capabilities = app_state::os_capabilities();
@@ -309,23 +307,23 @@ declare_class!(
             }
         }
 
-        #[sel(supportedInterfaceOrientations)]
+        #[method(supportedInterfaceOrientations)]
         fn supported_orientations(&self) -> UIInterfaceOrientationMask {
             *self._supported_orientations
         }
 
-        #[sel(setSupportedInterfaceOrientations:)]
+        #[method(setSupportedInterfaceOrientations:)]
         fn set_supported_orientations(&mut self, val: UIInterfaceOrientationMask) {
             *self._supported_orientations = val;
             UIViewController::attemptRotationToDeviceOrientation();
         }
 
-        #[sel(preferredScreenEdgesDeferringSystemGestures)]
+        #[method(preferredScreenEdgesDeferringSystemGestures)]
         fn preferred_screen_edges_deferring_system_gestures(&self) -> UIRectEdge {
             *self._preferred_screen_edges_deferring_system_gestures
         }
 
-        #[sel(setPreferredScreenEdgesDeferringSystemGestures:)]
+        #[method(setPreferredScreenEdgesDeferringSystemGestures:)]
         fn set_preferred_screen_edges_deferring_system_gestures(&mut self, val: UIRectEdge) {
             *self._preferred_screen_edges_deferring_system_gestures = val;
             let os_capabilities = app_state::os_capabilities();
@@ -341,16 +339,16 @@ declare_class!(
 extern_methods!(
     #[allow(non_snake_case)]
     unsafe impl WinitViewController {
-        #[sel(setPrefersStatusBarHidden:)]
+        #[method(setPrefersStatusBarHidden:)]
         pub(crate) fn setPrefersStatusBarHidden(&self, flag: bool);
 
-        #[sel(setSupportedInterfaceOrientations:)]
+        #[method(setSupportedInterfaceOrientations:)]
         pub(crate) fn setSupportedInterfaceOrientations(&self, val: UIInterfaceOrientationMask);
 
-        #[sel(setPrefersHomeIndicatorAutoHidden:)]
+        #[method(setPrefersHomeIndicatorAutoHidden:)]
         pub(crate) fn setPrefersHomeIndicatorAutoHidden(&self, val: bool);
 
-        #[sel(setPreferredScreenEdgesDeferringSystemGestures:)]
+        #[method(setPreferredScreenEdgesDeferringSystemGestures:)]
         pub(crate) fn setPreferredScreenEdgesDeferringSystemGestures(&self, val: UIRectEdge);
     }
 );
@@ -418,7 +416,7 @@ declare_class!(
     }
 
     unsafe impl WinitUIWindow {
-        #[sel(becomeKeyWindow)]
+        #[method(becomeKeyWindow)]
         fn become_key_window(&self) {
             unsafe {
                 app_state::handle_nonuser_event(EventWrapper::StaticEvent(Event::WindowEvent {
@@ -429,7 +427,7 @@ declare_class!(
             let _: () = unsafe { msg_send![super(self), becomeKeyWindow] };
         }
 
-        #[sel(resignKeyWindow)]
+        #[method(resignKeyWindow)]
         fn resign_key_window(&self) {
             unsafe {
                 app_state::handle_nonuser_event(EventWrapper::StaticEvent(Event::WindowEvent {
@@ -486,7 +484,7 @@ declare_class!(
 
     // UIApplicationDelegate protocol
     unsafe impl WinitApplicationDelegate {
-        #[sel(application:didFinishLaunchingWithOptions:)]
+        #[method(application:didFinishLaunchingWithOptions:)]
         fn did_finish_launching(&self, _application: &UIApplication, _: *mut NSObject) -> bool {
             unsafe {
                 app_state::did_finish_launching();
@@ -494,22 +492,22 @@ declare_class!(
             true
         }
 
-        #[sel(applicationDidBecomeActive:)]
+        #[method(applicationDidBecomeActive:)]
         fn did_become_active(&self, _application: &UIApplication) {
             unsafe { app_state::handle_nonuser_event(EventWrapper::StaticEvent(Event::Resumed)) }
         }
 
-        #[sel(applicationWillResignActive:)]
+        #[method(applicationWillResignActive:)]
         fn will_resign_active(&self, _application: &UIApplication) {
             unsafe { app_state::handle_nonuser_event(EventWrapper::StaticEvent(Event::Suspended)) }
         }
 
-        #[sel(applicationWillEnterForeground:)]
+        #[method(applicationWillEnterForeground:)]
         fn will_enter_foreground(&self, _application: &UIApplication) {}
-        #[sel(applicationDidEnterBackground:)]
+        #[method(applicationDidEnterBackground:)]
         fn did_enter_background(&self, _application: &UIApplication) {}
 
-        #[sel(applicationWillTerminate:)]
+        #[method(applicationWillTerminate:)]
         fn will_terminate(&self, application: &UIApplication) {
             let mut events = Vec::new();
             for window in application.windows().iter() {

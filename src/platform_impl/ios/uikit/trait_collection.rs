@@ -1,5 +1,5 @@
+use icrate::Foundation::{NSInteger, NSObject};
 use objc2::encode::{Encode, Encoding};
-use objc2::foundation::{NSInteger, NSObject};
 use objc2::{extern_class, extern_methods, ClassType};
 
 extern_class!(
@@ -13,7 +13,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl UITraitCollection {
-        #[sel(forceTouchCapability)]
+        #[method(forceTouchCapability)]
         pub fn forceTouchCapability(&self) -> UIForceTouchCapability;
     }
 );

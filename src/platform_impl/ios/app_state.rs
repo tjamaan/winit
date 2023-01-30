@@ -15,7 +15,7 @@ use core_foundation::runloop::{
     kCFRunLoopCommonModes, CFRunLoopAddTimer, CFRunLoopGetMain, CFRunLoopRef, CFRunLoopTimerCreate,
     CFRunLoopTimerInvalidate, CFRunLoopTimerRef, CFRunLoopTimerSetNextFireDate,
 };
-use objc2::foundation::{CGRect, CGSize, NSInteger, NSProcessInfo};
+use icrate::Foundation::{CGRect, CGSize, NSInteger, NSOperatingSystemVersion, NSProcessInfo};
 use objc2::rc::{Id, Shared};
 use objc2::runtime::Object;
 use objc2::{msg_send, sel};
@@ -27,10 +27,7 @@ use crate::{
     dpi::LogicalSize,
     event::{Event, StartCause, WindowEvent},
     event_loop::ControlFlow,
-    platform_impl::platform::{
-        event_loop::{EventHandler, EventProxy, EventWrapper, Never},
-        ffi::NSOperatingSystemVersion,
-    },
+    platform_impl::platform::event_loop::{EventHandler, EventProxy, EventWrapper, Never},
     window::WindowId as RootWindowId,
 };
 
@@ -934,7 +931,7 @@ macro_rules! os_capabilities {
             pub fn $error_name(&self, extra_msg: &str) {
                 log::warn!(
                     concat!("`", $objc_call, "` requires iOS {}.{}+. This device is running iOS {}.{}.{}. {}"),
-                    $major, $minor, self.os_version.major, self.os_version.minor, self.os_version.patch,
+                    $major, $minor, self.os_version.majorVersion, self.os_version.minorVersion, self.os_version.patchVersion,
                     extra_msg
                 )
             }
@@ -962,16 +959,20 @@ os_capabilities! {
     force_touch: 9-0,
 }
 
-impl NSOperatingSystemVersion {
+trait NSOperatingSystemVersionRequirements {
+    fn meets_requirements(&self, required_major: NSInteger, required_minor: NSInteger) -> bool;
+}
+
+impl NSOperatingSystemVersionRequirements for NSOperatingSystemVersion {
     fn meets_requirements(&self, required_major: NSInteger, required_minor: NSInteger) -> bool {
-        (self.major, self.minor) >= (required_major, required_minor)
+        (self.majorVersion, self.minorVersion) >= (required_major, required_minor)
     }
 }
 
 pub fn os_capabilities() -> OSCapabilities {
     static OS_CAPABILITIES: Lazy<OSCapabilities> = Lazy::new(|| {
         let version: NSOperatingSystemVersion = unsafe {
-            let process_info = NSProcessInfo::process_info();
+            let process_info = NSProcessInfo::processInfo();
             let atleast_ios_8: bool = msg_send![
                 &process_info,
                 respondsToSelector: sel!(operatingSystemVersion)
@@ -984,7 +985,7 @@ pub fn os_capabilities() -> OSCapabilities {
             //
             // The minimum required iOS version is likely to grow in the future.
             assert!(atleast_ios_8, "`winit` requires iOS version 8 or greater");
-            msg_send![&process_info, operatingSystemVersion]
+            process_info.operatingSystemVersion()
         };
         version.into()
     });

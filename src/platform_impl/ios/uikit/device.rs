@@ -1,4 +1,4 @@
-use objc2::foundation::{MainThreadMarker, NSObject};
+use icrate::Foundation::{MainThreadMarker, NSObject};
 use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, msg_send_id, ClassType};
 
@@ -19,7 +19,7 @@ extern_methods!(
             unsafe { msg_send_id![Self::class(), currentDevice] }
         }
 
-        #[sel(userInterfaceIdiom)]
+        #[method(userInterfaceIdiom)]
         pub fn userInterfaceIdiom(&self) -> UIUserInterfaceIdiom;
     }
 );

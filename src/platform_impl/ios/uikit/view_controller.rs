@@ -1,7 +1,7 @@
 use icrate::Foundation::{NSObject, NSUInteger};
 use objc2::encode::{Encode, Encoding};
 use objc2::rc::{Id, Shared};
-use objc2::{extern_class, extern_methods, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 
 use super::{UIResponder, UIView};
 

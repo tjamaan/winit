@@ -1,6 +1,7 @@
 #![allow(clippy::unnecessary_cast)]
 
-use icrate::Foundation::{CGFloat, CGRect, MainThreadMarker, NSObject, NSSet};
+use icrate::Foundation::{CGFloat, CGRect, MainThreadMarker, NSObject, NSObjectProtocol, NSSet};
+use objc2::declare::{IvarBool, IvarEncode};
 use objc2::rc::{Id, Shared};
 use objc2::runtime::Class;
 use objc2::{declare_class, extern_methods, msg_send, msg_send_id, ClassType};
@@ -260,11 +261,14 @@ impl WinitView {
 
 declare_class!(
     pub(crate) struct WinitViewController {
-        _prefers_status_bar_hidden: bool,
-        _prefers_home_indicator_auto_hidden: bool,
-        _supported_orientations: UIInterfaceOrientationMask,
-        _preferred_screen_edges_deferring_system_gestures: UIRectEdge,
+        _prefers_status_bar_hidden: IvarBool<"_prefers_status_bar_hidden">,
+        _prefers_home_indicator_auto_hidden: IvarBool<"_prefers_home_indicator_auto_hidden">,
+        _supported_orientations: IvarEncode<UIInterfaceOrientationMask, "_supported_orientations">,
+        _preferred_screen_edges_deferring_system_gestures:
+            IvarEncode<UIRectEdge, "_preferred_screen_edges_deferring_system_gestures">,
     }
+
+    mod ivars;
 
     unsafe impl ClassType for WinitViewController {
         #[inherits(UIResponder, NSObject)]
@@ -413,6 +417,7 @@ declare_class!(
     unsafe impl ClassType for WinitUIWindow {
         #[inherits(UIResponder, NSObject)]
         type Super = UIWindow;
+        const NAME: &'static str = "WinitUIWindow";
     }
 
     unsafe impl WinitUIWindow {
@@ -480,6 +485,7 @@ declare_class!(
 
     unsafe impl ClassType for WinitApplicationDelegate {
         type Super = NSObject;
+        const NAME: &'static str = "WinitApplicationDelegate";
     }
 
     // UIApplicationDelegate protocol

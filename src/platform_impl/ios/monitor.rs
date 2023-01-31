@@ -6,7 +6,7 @@ use std::{
     ops::{Deref, DerefMut},
 };
 
-use objc2::foundation::{MainThreadMarker, NSInteger};
+use icrate::Foundation::{MainThreadMarker, NSInteger};
 use objc2::rc::{Id, Shared};
 
 use super::uikit::{UIScreen, UIScreenMode};

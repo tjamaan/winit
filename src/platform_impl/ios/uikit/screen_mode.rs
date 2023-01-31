@@ -1,4 +1,4 @@
-use objc2::foundation::{CGSize, NSObject};
+use icrate::Foundation::{CGSize, NSObject};
 use objc2::{extern_class, extern_methods, ClassType};
 
 extern_class!(
@@ -12,7 +12,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl UIScreenMode {
-        #[sel(size)]
+        #[method(size)]
         pub fn size(&self) -> CGSize;
     }
 );

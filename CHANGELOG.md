@@ -10,6 +10,7 @@ And please only add new entries to the top of this list, right below the `# Unre
 
 - On Windows, fix window size for maximized, undecorated windows.
 - On Windows and macOS, add `WindowBuilder::with_active`.
+- Bump `objc2` dependency to version `0.3.0-beta.4` and add `icrate` dependency required for `Foundation` framework types.
 - Add `Window::is_minimized`.
 - On X11, fix errors handled during `register_xlib_error_hook` invocation bleeding into winit.
 - Add `Window::has_focus`.

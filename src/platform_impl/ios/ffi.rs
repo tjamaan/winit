@@ -2,29 +2,10 @@
 
 use std::convert::TryInto;
 
+use icrate::Foundation::{NSInteger, NSUInteger};
 use objc2::encode::{Encode, Encoding};
-use objc2::foundation::{NSInteger, NSUInteger};
 
 use crate::platform::ios::{Idiom, ScreenEdge};
-
-#[repr(C)]
-#[derive(Clone, Debug)]
-pub struct NSOperatingSystemVersion {
-    pub major: NSInteger,
-    pub minor: NSInteger,
-    pub patch: NSInteger,
-}
-
-unsafe impl Encode for NSOperatingSystemVersion {
-    const ENCODING: Encoding = Encoding::Struct(
-        "NSOperatingSystemVersion",
-        &[
-            NSInteger::ENCODING,
-            NSInteger::ENCODING,
-            NSInteger::ENCODING,
-        ],
-    );
-}
 
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

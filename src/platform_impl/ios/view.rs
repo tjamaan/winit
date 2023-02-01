@@ -4,7 +4,9 @@ use icrate::Foundation::{CGFloat, CGRect, MainThreadMarker, NSObject, NSObjectPr
 use objc2::declare::{IvarBool, IvarEncode};
 use objc2::rc::{Id, Shared};
 use objc2::runtime::Class;
-use objc2::{declare_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{
+    declare_class, extern_methods, extern_protocol, msg_send, msg_send_id, ClassType, ProtocolType,
+};
 
 use super::uikit::{
     UIApplication, UIDevice, UIEvent, UIForceTouchCapability, UIInterfaceOrientationMask,
@@ -480,6 +482,34 @@ impl WinitUIWindow {
     }
 }
 
+extern_protocol!(
+    unsafe trait UIApplicationDelegate {
+        #[method(application:didFinishLaunchingWithOptions:)]
+        fn did_finish_launching(
+            &self,
+            application: &UIApplication,
+            launch_options: *mut NSObject,
+        ) -> bool;
+
+        #[method(applicationDidBecomeActive:)]
+        fn did_become_active(&self, application: &UIApplication);
+
+        #[method(applicationWillResignActive:)]
+        fn will_resign_active(&self, application: &UIApplication);
+
+        #[method(applicationWillEnterForeground:)]
+        fn will_enter_foreground(&self, application: &UIApplication);
+
+        #[method(applicationDidEnterBackground:)]
+        fn did_enter_background(&self, application: &UIApplication);
+
+        #[method(applicationWillTerminate:)]
+        fn will_terminate(&self, application: &UIApplication);
+    }
+
+    unsafe impl ProtocolType for dyn UIApplicationDelegate {}
+);
+
 declare_class!(
     pub struct WinitApplicationDelegate {}
 
@@ -488,7 +518,6 @@ declare_class!(
         const NAME: &'static str = "WinitApplicationDelegate";
     }
 
-    // UIApplicationDelegate protocol
     unsafe impl WinitApplicationDelegate {
         #[method(application:didFinishLaunchingWithOptions:)]
         fn did_finish_launching(&self, _application: &UIApplication, _: *mut NSObject) -> bool {
@@ -510,6 +539,7 @@ declare_class!(
 
         #[method(applicationWillEnterForeground:)]
         fn will_enter_foreground(&self, _application: &UIApplication) {}
+
         #[method(applicationDidEnterBackground:)]
         fn did_enter_background(&self, _application: &UIApplication) {}
 
@@ -537,3 +567,6 @@ declare_class!(
         }
     }
 );
+
+// UIApplicationDelegate protocol
+unsafe impl UIApplicationDelegate for WinitApplicationDelegate {}

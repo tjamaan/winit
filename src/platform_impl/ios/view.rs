@@ -518,9 +518,14 @@ declare_class!(
         const NAME: &'static str = "WinitApplicationDelegate";
     }
 
-    unsafe impl WinitApplicationDelegate {
+    // UIApplicationDelegate protocol
+    unsafe impl UIApplicationDelegate for WinitApplicationDelegate {
         #[method(application:didFinishLaunchingWithOptions:)]
-        fn did_finish_launching(&self, _application: &UIApplication, _: *mut NSObject) -> bool {
+        fn did_finish_launching(
+            &self,
+            _application: &UIApplication,
+            _launch_options: *mut NSObject,
+        ) -> bool {
             unsafe {
                 app_state::did_finish_launching();
             }
@@ -567,6 +572,3 @@ declare_class!(
         }
     }
 );
-
-// UIApplicationDelegate protocol
-unsafe impl UIApplicationDelegate for WinitApplicationDelegate {}
